@@ -34,3 +34,39 @@ fig2 = px.histogram(df, x='body_mass_g', nbins=30,
                 title='Distribution of Body Mass')
 
 st.plotly_chart(fig2)
+
+data = {
+    'island': island,
+    'bill_length_mm': bill_length_mm,
+    'bill_depth_mm': bill_depth_mm,
+    'flipper_length_mm': flipper_length_mm,
+    'body_mass_g': body_mass_g,
+    'sex': gender
+}
+input_df = pd.DataFrame(data, index=[0])
+input_penguins = pd.concat([input_df, X_raw], axis=0)
+
+with st.expander('Input features'):
+  st.write('**Inpute peguin**')
+  st.dataframe(input_df)
+  st.write('**Combined penguins data** (input row = original data)')
+  st.dataframe(input_penguins)
+
+encode = ['island', 'sex']
+df_pengiuns = pd.get_dummies(input_penguins, prefix=encode)
+
+X = df_pengiuns[:1]
+
+target_mapper = {'Adelie': 0, 'Chinstrap': 1, 'Gentoo': 2}
+
+def target_encode(val):
+  return target_mapper[val]
+
+
+y = y_raw.apply(target_encode)
+
+with st.expander('Data preparation'):
+  st.write('**Encoded X**')
+  st.dataframe(input_row)
+  st.write('**Encoded y**')
+  st.write(y)
