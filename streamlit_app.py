@@ -56,7 +56,7 @@ encode = ['island', 'sex']
 df_pengiuns = pd.get_dummies(input_penguins, prefix=encode)
 
 X = df_pengiuns[:1]
-
+input_raw = df_pengiuns[:1]
 target_mapper = {'Adelie': 0, 'Chinstrap': 1, 'Gentoo': 2}
 
 def target_encode(val):
