@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
-from sklearn.esemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier
+import numpy as np
 import plotly.express as px
 
 st.title('🎈 Amir Olimi')
