@@ -12,6 +12,32 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import roc_curve, auc, roc_auc_score
 from mlxtend.plotting import plot_decision_regions
+from sklearn.metrics import confusion_matrix, classification_report
+
+def evaluate_model(model, X_test, y_test, model_name):
+    # Предсказания модели
+    y_pred = model.predict(X_test)
+
+    # Матрица ошибок
+    cm = confusion_matrix(y_test, y_pred)
+    fig, ax = plt.subplots(figsize=(6, 4))
+    sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=["Class 0", "Class 1"], yticklabels=["Class 0", "Class 1"])
+    plt.xlabel("Предсказанный класс")
+    plt.ylabel("Истинный класс")
+    plt.title(f"Матрица ошибок: {model_name}")
+    st.pyplot(fig)
+
+    # Отчёт о классификации (F1-score, Precision, Recall)
+    st.subheader(f"📊 Метрики модели {model_name}")
+    report = classification_report(y_test, y_pred, output_dict=True)
+    st.write(pd.DataFrame(report).transpose())
+
+# Вызов функции для всех моделей
+def analyze_classification_results(knc, log_reg, dtc, X_test, y_test):
+    evaluate_model(knc, X_test, y_test, "K-Nearest Neighbors")
+    evaluate_model(log_reg, X_test, y_test, "Logistic Regression")
+    evaluate_model(dtc, X_test, y_test, "Decision Tree")
+
 
 def load_data(url):
     data = pd.read_csv(url, header=None)
@@ -123,7 +149,29 @@ def evaluate_models(knc, log_reg, dtc, X_train, X_test, y_train, y_test):
     st.write("**Сравнение моделей по AUC**")
     st.dataframe(results)
     st.write("Видно что у маделей KNN и Decission Tree переобучение так как у них на трейне высокий показатель а на тесте низкий. А у модели Logistic Regression такого нет. по этому будем считать что самый хорошый модель это - Logistic Regression")
+def evaluate_model(model, X_test, y_test, model_name):
+    # Предсказания модели
+    y_pred = model.predict(X_test)
 
+    # Матрица ошибок
+    cm = confusion_matrix(y_test, y_pred)
+    fig, ax = plt.subplots(figsize=(6, 4))
+    sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=["Class 0", "Class 1"], yticklabels=["Class 0", "Class 1"])
+    plt.xlabel("Предсказанный класс")
+    plt.ylabel("Истинный класс")
+    plt.title(f"Матрица ошибок: {model_name}")
+    st.pyplot(fig)
+
+    # Отчёт о классификации (F1-score, Precision, Recall)
+    st.subheader(f"📊 Метрики модели {model_name}")
+    report = classification_report(y_test, y_pred, output_dict=True)
+    st.write(pd.DataFrame(report).transpose())
+
+# Вызов функции для всех моделей
+def analyze_classification_results(knc, log_reg, dtc, X_test, y_test):
+    evaluate_model(knc, X_test, y_test, "K-Nearest Neighbors")
+    evaluate_model(log_reg, X_test, y_test, "Logistic Regression")
+    evaluate_model(dtc, X_test, y_test, "Decision Tree")
 
 def main():
     st.title("📊 Анализ набора данных из репозитория UCI")
@@ -192,6 +240,8 @@ def main():
         plot_roc_curves(knc, log_reg, dtc, X_test, y_test)
         st.subheader("🔹 9. Оценка качества классификации")
         evaluate_models(knc, log_reg, dtc, X_train, X_test, y_train, y_test)
+
+        analyze_classification_results(knc, log_reg, dtc, X_test, y_test)
 
 if __name__ == "__main__":
     main()
