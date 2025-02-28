@@ -18,8 +18,26 @@ def preprocess_features(data):
     for col in ["A11", "A14", "A15", "A16"]:
         data[col] = data[col].astype(int)
     return data
+    
+def feature_selection(data):
+    # 1. Корреляция с таргетом (A16)
+    correlation_with_target = data.drop(columns=["A16"]).corrwith(data["A16"]).sort_values(ascending=False)
+    st.subheader("🔹 Корреляция признаков с таргетом (A16)")
+    st.write(correlation_with_target)
 
+    # 2. Количество уникальных значений в каждом признаке
+    unique_values_count = data.nunique()
+    st.subheader("🔹 Количество уникальных значений в каждом признаке")
+    st.write(unique_values_count)
 
+    # 3. Отбор признаков с более чем 10 уникальными значениями
+    significant_features = unique_values_count[unique_values_count > 10].index.tolist()
+    significant_features_with_correlation = correlation_with_target[significant_features].sort_values(ascending=False)
+    
+    st.subheader("🔹 Три наиболее значимые признаки с более чем 10 уникальными значениями")
+    st.write(significant_features_with_correlation.head(3))
+
+    return significant_features_with_correlation.head(3).index.tolist()
 
 def main():
     st.title("📊 Анализ набора данных из репозитория UCI")
@@ -99,6 +117,12 @@ def main():
             
             csv = processed_data.to_csv(index=False)
             st.download_button("Скачать обработанные данные", csv, "processed_data.csv", "text/csv")
+
+        # Шаг 4
+        if st.button("🔄 Отбор признаков"):
+            significant_features = feature_selection(processed_data)
+            st.subheader("🔹 Три наиболее значимые признаки:")
+            st.write(significant_features)
 
 if __name__ == "__main__":
     main()
