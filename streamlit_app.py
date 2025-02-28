@@ -97,11 +97,20 @@ def classification_models(data):
     return knc, log_reg, dtc, X_train, X_test, y_train, y_test
 
 def plot_decision_boundaries(X_train, y_train, knc, log_reg, dtc):
-    X_train_np = np.array(X_train)[:, :2]
+    X_train_np = np.array(X_train)[:, :2]  # Берем только 2 признака
     y_train_np = np.array(y_train)
+
+    # Проверяем количество классов
+    unique_classes = np.unique(y_train_np)
+    if len(unique_classes) < 2:
+        st.error("Ошибка: В y_train только один класс! Логистическая регрессия требует минимум два класса.")
+        return
+
+    # Обучаем модели
     knc.fit(X_train_np, y_train_np)
     log_reg.fit(X_train_np, y_train_np)
     dtc.fit(X_train_np, y_train_np)
+
     fig, axes = plt.subplots(1, 3, figsize=(18, 5))
     classifiers = [(knc, "K-Nearest Neighbors"), (log_reg, "Logistic Regression"), (dtc, "Decision Tree")]
     
@@ -112,10 +121,11 @@ def plot_decision_boundaries(X_train, y_train, knc, log_reg, dtc):
         plt.ylabel("A3")
         plt.title(title)
     
-    plt.suptitle("граница решений для каждого классификатора ", fontsize=14)
+    plt.suptitle("Граница решений для каждого классификатора", fontsize=14)
     plt.tight_layout(rect=[0, 0, 1, 0.95])
     plt.show()
-    st.pyplot(plt)
+    st.pyplot(fig)
+
 
 def plot_roc_curves(knc, log_reg, dtc, X_test, y_test):
     y_score_knc = knc.predict_proba(X_test)[:, 1]
