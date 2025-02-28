@@ -13,10 +13,13 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import roc_curve, auc
 from mlxtend.plotting import plot_decision_regions
 
+
+
 def load_data(url):
     data = pd.read_csv(url, header=None)
     data.columns = [f"A{i}" for i in range(1, 17)]
     return data
+
 
 def preprocess_features(data):
     data = data.drop(columns=["A1", "A4", "A5", "A6", "A7", "A9", "A10", "A12", "A13"])
@@ -37,8 +40,10 @@ def feature_selection(data):
     st.write(unique_values_count)
     significant_features = unique_values_count[unique_values_count > 10].index.tolist()
     significant_features_with_correlation = correlation_with_target[significant_features].sort_values(ascending=False)
+    
     st.subheader("🔹 Три наиболее значимые признаки с более чем 10 уникальными значениями")
     st.write(significant_features_with_correlation.head(3))
+
     return significant_features_with_correlation.head(3).index.tolist()
 
 def plot_3d_graph(data):
@@ -48,8 +53,10 @@ def plot_3d_graph(data):
     - 🏷 Подпишите оси названиями признаков.
     - 🖼 Добавьте заголовок с названием набора данных и легенду.
     """)
+
     fig = plt.figure(figsize=(10, 8))
     ax = fig.add_subplot(111, projection='3d')
+    
     scatter = ax.scatter(data['A11'], data['A8'], data['A3'], c=data['A16'], marker='o', cmap='viridis')
     ax.set_xlabel('A11')
     ax.set_ylabel('A8')
@@ -68,36 +75,37 @@ def classification_models(data):
     knc = KNeighborsClassifier(n_neighbors=3)
     log_reg = LogisticRegression(max_iter=565)
     dtc = DecisionTreeClassifier(max_depth = 5)
-    knc.fit(X_train, y_train)
-    log_reg.fit(X_train, y_train)
-    dtc.fit(X_train, y_train)
     st.subheader("🔹 Модели классификации обучены")
     st.write("K-Nearest Neighbors, Logistic Regression, Decision Tree успешно обучены на данных.")
+    
     return knc, log_reg, dtc, X_train, X_test, y_train, y_test
 
 def plot_decision_boundaries(X_train, y_train, knc, log_reg, dtc):
+    X_train_np = np.array(X_train)[:, :2]
+    y_train_np = np.array(y_train)
+    knc.fit(X_train_np, y_train_np)
+    log_reg.fit(X_train_np, y_train_np)
+    dtc.fit(X_train_np, y_train_np)
     fig, axes = plt.subplots(1, 3, figsize=(18, 5))
     classifiers = [(knc, "K-Nearest Neighbors"), (log_reg, "Logistic Regression"), (dtc, "Decision Tree")]
+    
     for idx, (clf, title) in enumerate(classifiers):
         plt.sca(axes[idx])  
         plot_decision_regions(X_train_np, y_train_np, clf=clf, legend=2)
         plt.xlabel("A2")
         plt.ylabel("A3")
         plt.title(title)
+    
     plt.suptitle("граница решений для каждого классификатора ", fontsize=14)
     plt.tight_layout(rect=[0, 0, 1, 0.95])
     plt.show()
     st.pyplot(plt)
 
+
 def plot_roc_curves(knc, log_reg, dtc, X_test, y_test):
     y_score_knc = knc.predict_proba(X_test)[:, 1]
     y_score_log_reg = log_reg.predict_proba(X_test)[:, 1]
     y_score_dtc = dtc.predict_proba(X_test)[:, 1]
-    X_train_np = np.array(X_train)[:, :2]
-    y_train_np = np.array(y_train)
-    knc.fit(X_train_np, y_train_np)
-    log_reg.fit(X_train_np, y_train_np)
-    dtc.fit(X_train_np, y_train_np)
     fpr_knc, tpr_knc, _ = roc_curve(y_test, y_score_knc)
     fpr_log_reg, tpr_log_reg, _ = roc_curve(y_test, y_score_log_reg)
     fpr_dtc, tpr_dtc, _ = roc_curve(y_test, y_score_dtc)
@@ -115,7 +123,6 @@ def plot_roc_curves(knc, log_reg, dtc, X_test, y_test):
     plt.grid()
     plt.show()
     st.pyplot(plt)
-
 
 def main():
     st.title("📊 Анализ набора данных из репозитория UCI")
@@ -147,7 +154,7 @@ def main():
         st.write(data.isna().sum())
 
         st.subheader("🔢 Информация о данных до обработки")
-        st.write(print(data.info()))
+        st.write(data.info())
 
         st.subheader("Уникальные значения в столбце A16 до обработки")
         st.write(data["A16"].unique())
@@ -184,7 +191,7 @@ def main():
         st.dataframe(processed_data.head(num_rows))
         
         st.subheader("🔢 Информация о данных после обработки")
-        st.write(print(processed_data.info()))
+        st.write(processed_data.info())
         
         st.subheader("📉 Количество пропущенных значений после обработки данных")
         st.write(processed_data.isna().sum())
