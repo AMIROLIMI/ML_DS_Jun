@@ -4,6 +4,64 @@ import numpy as np
 from sklearn.impute import SimpleImputer
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score
+
+def classification_step(data):
+    st.subheader("🔹 Шаг 6: Классификация")
+    st.markdown("""
+    - 📊 Разделите данные на обучающую (70%) и тестовую (30%) выборки.
+    - ⚙️ Выполните стандартизацию признаков перед обучением моделей.
+    - 🤖 Постройте модели классификации на основе двух наиболее коррелированных признаков:
+        - Классификатор ближайших соседей (k=3)
+        - Логистическая регрессия (iterations=565)
+        - Дерево решений (max_depth=5)
+    """)
+    
+    # Разделение на признаки (X) и целевую переменную (y)
+    X = data.drop(columns=["A16"])
+    y = data["A16"]
+    
+    # Разделение на обучающую и тестовую выборки
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+    
+    # Стандартизация данных
+    scaler = StandardScaler()
+    X_train = scaler.fit_transform(X_train)
+    X_test = scaler.transform(X_test)
+    
+    # Создание и обучение моделей
+    knc = KNeighborsClassifier(n_neighbors=3)
+    log_reg = LogisticRegression(max_iter=565)
+    dtc = DecisionTreeClassifier(max_depth=5)
+    
+    # Обучение моделей
+    knc.fit(X_train, y_train)
+    log_reg.fit(X_train, y_train)
+    dtc.fit(X_train, y_train)
+    
+    # Оценка моделей
+    knc_pred = knc.predict(X_test)
+    log_reg_pred = log_reg.predict(X_test)
+    dtc_pred = dtc.predict(X_test)
+    
+    # Вывод точности моделей
+    knc_acc = accuracy_score(y_test, knc_pred)
+    log_reg_acc = accuracy_score(y_test, log_reg_pred)
+    dtc_acc = accuracy_score(y_test, dtc_pred)
+    
+    st.subheader("📈 Оценка моделей")
+    st.markdown(f"📊 Точность классификатора ближайших соседей (k-NN): {knc_acc:.4f}")
+    st.markdown(f"📊 Точность логистической регрессии: {log_reg_acc:.4f}")
+    st.markdown(f"📊 Точность дерева решений: {dtc_acc:.4f}")
+
+# Вызов функции для выполнения классификации
+
+
 
 def load_data(url):
     data = pd.read_csv(url, header=None)
@@ -160,6 +218,8 @@ def main():
         st.write(significant_features)
         # шаг 5
         plot_3d_graph(processed_data)
+        # шаг 6
+        classification_step(processed_data)
 
 if __name__ == "__main__":
     main()
