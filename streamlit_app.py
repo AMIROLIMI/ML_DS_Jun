@@ -203,15 +203,6 @@ def analyze_classification_results(knc, log_reg, dtc, X_test, y_test):
         st.write(f"{name} - Prediction Distribution:")
         st.bar_chart(pd.Series(y_pred).value_counts())
 
-def visualize_data2(data):
-    st.subheader("Pairplot Selected Features")
-    import seaborn as sns
-    import matplotlib.pyplot as plt
-    selected_features = ["A11", "A8", "A3", "A16"]
-    data_selected = data[selected_features]
-    pairplot_fig = sns.pairplot(data_selected, hue="A16", diag_kind='kde')
-    st.pyplot(pairplot_fig)
-
 
 def main():
     st.title("📊 Анализ набора данных из репозитория UCI")
@@ -285,7 +276,6 @@ def main():
         visualize_data(processed_data)
         evaluate_models(knc, log_reg, dtc, X_train, X_test, y_train, y_test)
         analyze_classification_results(knc, log_reg, dtc, X_test, y_test)
-        visualize_data2(processed_data)
 
 if __name__ == "__main__":
     main()
