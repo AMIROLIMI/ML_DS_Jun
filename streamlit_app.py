@@ -13,13 +13,10 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import roc_curve, auc
 from mlxtend.plotting import plot_decision_regions
 
-
-
 def load_data(url):
     data = pd.read_csv(url, header=None)
     data.columns = [f"A{i}" for i in range(1, 17)]
     return data
-
 
 def preprocess_features(data):
     data = data.drop(columns=["A1", "A4", "A5", "A6", "A7", "A9", "A10", "A12", "A13"])
@@ -40,10 +37,8 @@ def feature_selection(data):
     st.write(unique_values_count)
     significant_features = unique_values_count[unique_values_count > 10].index.tolist()
     significant_features_with_correlation = correlation_with_target[significant_features].sort_values(ascending=False)
-    
     st.subheader("🔹 Три наиболее значимые признаки с более чем 10 уникальными значениями")
     st.write(significant_features_with_correlation.head(3))
-
     return significant_features_with_correlation.head(3).index.tolist()
 
 def plot_3d_graph(data):
@@ -53,10 +48,8 @@ def plot_3d_graph(data):
     - 🏷 Подпишите оси названиями признаков.
     - 🖼 Добавьте заголовок с названием набора данных и легенду.
     """)
-
     fig = plt.figure(figsize=(10, 8))
     ax = fig.add_subplot(111, projection='3d')
-    
     scatter = ax.scatter(data['A11'], data['A8'], data['A3'], c=data['A16'], marker='o', cmap='viridis')
     ax.set_xlabel('A11')
     ax.set_ylabel('A8')
@@ -75,69 +68,49 @@ def classification_models(data):
     knc = KNeighborsClassifier(n_neighbors=3)
     log_reg = LogisticRegression(max_iter=565)
     dtc = DecisionTreeClassifier(max_depth = 5)
-    st.subheader("🔹 Модели классификации обучены")
-    st.write("K-Nearest Neighbors, Logistic Regression, Decision Tree успешно обучены на данных.")
-    
-    return knc, log_reg, dtc, X_train, X_test, y_train, y_test
-
-def plot_decision_boundaries(X_train, y_train, knc, log_reg, dtc):
     X_train_np = np.array(X_train)[:, :2]
     y_train_np = np.array(y_train)
-    
     knc.fit(X_train_np, y_train_np)
     log_reg.fit(X_train_np, y_train_np)
     dtc.fit(X_train_np, y_train_np)
+    st.subheader("🔹 Модели классификации обучены")
+    st.write("K-Nearest Neighbors, Logistic Regression, Decision Tree успешно обучены на данных.")
+    return knc, log_reg, dtc, X_train, X_test, y_train, y_test
+
+def plot_decision_boundaries(X_train, y_train, knc, log_reg, dtc):
     fig, axes = plt.subplots(1, 3, figsize=(18, 5))
     classifiers = [(knc, "K-Nearest Neighbors"), (log_reg, "Logistic Regression"), (dtc, "Decision Tree")]
-    
     for idx, (clf, title) in enumerate(classifiers):
         plt.sca(axes[idx])  
         plot_decision_regions(X_train_np, y_train_np, clf=clf, legend=2)
         plt.xlabel("A2")
         plt.ylabel("A3")
         plt.title(title)
-    
     plt.suptitle("граница решений для каждого классификатора ", fontsize=14)
     plt.tight_layout(rect=[0, 0, 1, 0.95])
     plt.show()
     st.pyplot(plt)
 
-
 def plot_roc_curves(knc, log_reg, dtc, X_test, y_test):
-    unique_classes = np.unique(y_test)
-    if len(unique_classes) < 2:
-        st.error("Ошибка: В y_test только один класс! ROC-кривая требует минимум два класса.")
-        return
-
-    plt.figure(figsize=(10, 6))
-
-    # Проверяем, поддерживает ли модель predict_proba
-    if hasattr(knc, "predict_proba"):
-        y_score_knc = knc.predict_proba(X_test)[:, 1]
-    else:
-        st.warning("KNeighborsClassifier не поддерживает predict_proba, используем decision_function")
-        y_score_knc = knc.decision_function(X_test)
-
-    fpr_knc, tpr_knc, _ = roc_curve(y_test, y_score_knc)
-    roc_auc_knc = auc(fpr_knc, tpr_knc)
-    plt.plot(fpr_knc, tpr_knc, label=f"KNN (AUC = {roc_auc_knc:.2f})")
-
-    y_score_log = log_reg.predict_proba(X_test)[:, 1]
-    fpr_log, tpr_log, _ = roc_curve(y_test, y_score_log)
-    roc_auc_log = auc(fpr_log, tpr_log)
-    plt.plot(fpr_log, tpr_log, label=f"Logistic Regression (AUC = {roc_auc_log:.2f})")
-
+    y_score_knc = knc.predict_proba(X_test)[:, 1]
+    y_score_log_reg = log_reg.predict_proba(X_test)[:, 1]
     y_score_dtc = dtc.predict_proba(X_test)[:, 1]
+    fpr_knc, tpr_knc, _ = roc_curve(y_test, y_score_knc)
+    fpr_log_reg, tpr_log_reg, _ = roc_curve(y_test, y_score_log_reg)
     fpr_dtc, tpr_dtc, _ = roc_curve(y_test, y_score_dtc)
-    roc_auc_dtc = auc(fpr_dtc, tpr_dtc)
-    plt.plot(fpr_dtc, tpr_dtc, label=f"Decision Tree (AUC = {roc_auc_dtc:.2f})")
-
-    plt.plot([0, 1], [0, 1], "k--")
-    plt.xlabel("False Positive Rate")
-    plt.ylabel("True Positive Rate")
-    plt.title("ROC-кривые классификаторов")
-    plt.legend(loc="lower right")
-
+    auc_knc = auc(fpr_knc, tpr_knc)
+    auc_log_reg = auc(fpr_log_reg, tpr_log_reg)
+    auc_dtc = auc(fpr_dtc, tpr_dtc)
+    plt.plot(fpr_knc, tpr_knc, label=f'KNN (AUC = {auc_knc:.2f})', linestyle='-', color='blue')
+    plt.plot(fpr_log_reg, tpr_log_reg, label=f'Logistic Regression (AUC = {auc_log_reg:.2f})', linestyle='-', color='orange')
+    plt.plot(fpr_dtc, tpr_dtc, label=f'Decision Tree (AUC = {auc_dtc:.2f})', linestyle='-', color='green')
+    plt.plot([0, 1], [0, 1], linestyle='--', color='gray')
+    plt.xlabel('FPR')
+    plt.ylabel('TPR')
+    plt.title('ROC-кривые')
+    plt.legend()
+    plt.grid()
+    plt.show()
     st.pyplot(plt)
 
 
