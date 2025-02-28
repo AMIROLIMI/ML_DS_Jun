@@ -156,7 +156,7 @@ def main():
         st.write(data.isna().sum())
 
         st.subheader("🔢 Информация о данных до обработки")
-        st.text(data.info())
+        st.write(data.info())
 
         st.subheader("Уникальные значения в столбце A16 до обработки")
         st.write(data["A16"].unique())
@@ -193,7 +193,7 @@ def main():
         st.dataframe(processed_data.head(num_rows))
         
         st.subheader("🔢 Информация о данных после обработки")
-        st.text(processed_data.info())
+        st.write(processed_data.info())
         
         st.subheader("📉 Количество пропущенных значений после обработки данных")
         st.write(processed_data.isna().sum())
