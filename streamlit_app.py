@@ -101,7 +101,6 @@ def classification_models(data):
     log_reg = LogisticRegression(max_iter=565)
     dtc = DecisionTreeClassifier(max_depth=5)
     
-    knc.fit(X_train, y_train)
     log_reg.fit(X_train, y_train)
     dtc.fit(X_train, y_train)
 
