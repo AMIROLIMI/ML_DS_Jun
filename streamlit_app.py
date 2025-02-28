@@ -69,7 +69,7 @@ def main():
             """)
 
             st.subheader("Обработанные метки классов")
-            st.dataframe(processed_data.head(num_rows))
+            st.dataframe(data.head(num_rows))
 
         st.subheader("🔹 Шаг 3: Предобработка признаков")
         st.markdown("""
