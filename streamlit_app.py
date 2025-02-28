@@ -266,7 +266,6 @@ def main():
 
         # Шаг 4:
         st.subheader("🔹 Шаг 4: Отбор признаков")
-        st.dataframe(data.head(num_rows))
         significant_features = feature_selection(processed_data)
         st.subheader("🔹 Три наиболее значимые признаки:")
         st.write(significant_features)
