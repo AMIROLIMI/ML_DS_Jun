@@ -189,19 +189,6 @@ def visualize_data(data):
     visualize_pairplot(data)
     visualize_correlation_matrix(data)
 
-def evaluate_models(knc, log_reg, dtc, X_train, X_test, y_train, y_test):
-    models = {"KNN": knc, "Logistic Regression": log_reg, "Decision Tree": dtc}
-    for name, model in models.items():
-        y_pred = model.predict(X_test)
-        accuracy = accuracy_score(y_test, y_pred)
-        st.write(f"{name} - Accuracy: {accuracy:.2f}")
-
-def analyze_classification_results(knc, log_reg, dtc, X_test, y_test):
-    models = {"KNN": knc, "Logistic Regression": log_reg, "Decision Tree": dtc}
-    for name, model in models.items():
-        y_pred = model.predict(X_test)
-        st.write(f"{name} - Prediction Distribution:")
-        st.bar_chart(pd.Series(y_pred).value_counts())
 
 
 def main():
@@ -275,7 +262,6 @@ def main():
         analyze_classification_results(knc, log_reg, dtc, X_test, y_test)
         visualize_data(processed_data)
         evaluate_models(knc, log_reg, dtc, X_train, X_test, y_train, y_test)
-        analyze_classification_results(knc, log_reg, dtc, X_test, y_test)
 
 if __name__ == "__main__":
     main()
