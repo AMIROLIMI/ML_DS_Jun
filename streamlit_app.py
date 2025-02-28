@@ -75,20 +75,20 @@ def classification_models(data):
     knc = KNeighborsClassifier(n_neighbors=3)
     log_reg = LogisticRegression(max_iter=565)
     dtc = DecisionTreeClassifier(max_depth = 5)
+    X_train = np.array(X_train)[:, :2]
+    y_train = np.array(y_train)
+    knc.fit(X_train, y_train)
+    log_reg.fit(X_train, y_train)
+    dtc.fit(X_train, y_train)
     st.subheader("🔹 Модели классификации обучены")
     st.write("K-Nearest Neighbors, Logistic Regression, Decision Tree успешно обучены на данных.")
     
     return knc, log_reg, dtc, X_train, X_test, y_train, y_test
 
 def plot_decision_boundaries(X_train, y_train, knc, log_reg, dtc):
-    X_train_np = np.array(X_train)[:, :2]
-    y_train_np = np.array(y_train)
-    knc.fit(X_train_np, y_train_np)
-    log_reg.fit(X_train_np, y_train_np)
-    dtc.fit(X_train_np, y_train_np)
+    
     fig, axes = plt.subplots(1, 3, figsize=(18, 5))
     classifiers = [(knc, "K-Nearest Neighbors"), (log_reg, "Logistic Regression"), (dtc, "Decision Tree")]
-    
     for idx, (clf, title) in enumerate(classifiers):
         plt.sca(axes[idx])  
         plot_decision_regions(X_train_np, y_train_np, clf=clf, legend=2)
