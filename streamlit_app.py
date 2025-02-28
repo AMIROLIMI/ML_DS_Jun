@@ -11,6 +11,7 @@ def load_data(url):
 
 def preprocess_features(data):
     data = data.drop(columns=["A1", "A4", "A5", "A6", "A7", "A9", "A10", "A12", "A13"])
+    data["A16"] = data["A16"].apply(lambda x: 1 if x == "+" else 0)
     data.replace("?", np.nan, inplace=True)
     imputer = SimpleImputer(strategy='mean')
     data = pd.DataFrame(imputer.fit_transform(data), columns=data.columns)
@@ -83,8 +84,7 @@ def main():
         """)
         
         if st.button("🔄 Обработать данные"):
-            # processed_data = preprocess_features(data)
-            processed_data = data
+            processed_data = preprocess_features(data)
             st.subheader("Обработанные данные")
             st.dataframe(processed_data.head(num_rows))
             
