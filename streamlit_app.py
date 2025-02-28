@@ -79,25 +79,33 @@ def classification_models(data):
     y = data["A16"]
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=11)
     scaler_option = st.selectbox("Выберите метод нормализации:", ["StandardScaler", "MinMaxScaler"])
-    if scaler_option == "StandardScaler":
-        scaler = StandardScaler()
-    else:
-        scaler = MinMaxScaler()
-        
+    scaler = StandardScaler() if scaler_option == "StandardScaler" else MinMaxScaler()
+    
     X_train = scaler.fit_transform(X_train)
     X_test = scaler.transform(X_test)
-    knc = KNeighborsClassifier(n_neighbors=3)
-    log_reg = LogisticRegression(max_iter=565)
-    dtc = DecisionTreeClassifier(max_depth = 5)
+
+    kn_neighbors = st.slider("Число соседей (k) для KNN:", min_value=1, max_value=15, value=3)
+    log_max_iter = st.slider("Макс. итераций для логистической регрессии:", min_value=100, max_value=1000, value=565, step=50)
+    dt_max_depth = st.slider("Макс. глубина дерева решений:", min_value=1, max_value=20, value=5)
+
+    knc = KNeighborsClassifier(n_neighbors=kn_neighbors)
+    log_reg = LogisticRegression(max_iter=log_max_iter)
+    dtc = DecisionTreeClassifier(max_depth=dt_max_depth)
+
     X_train = np.array(X_train)[:, :2]
     X_test = np.array(X_test)[:, :2]
     y_train = np.array(y_train)
+
     knc.fit(X_train, y_train)
     log_reg.fit(X_train, y_train)
     dtc.fit(X_train, y_train)
+
     st.subheader("🔹 Модели классификации обучены")
-    st.write("K-Nearest Neighbors, Logistic Regression, Decision Tree успешно обучены на данных.")
+    st.write(f"Выбранная нормализация: {scaler_option}")
+    st.write(f"KNN (k={kn_neighbors}), Logistic Regression (max_iter={log_max_iter}), Decision Tree (max_depth={dt_max_depth}) успешно обучены.")
+
     return knc, log_reg, dtc, X_train, X_test, y_train, y_test
+
 
 def plot_decision_boundaries(X_train, y_train, knc, log_reg, dtc):
     fig, axes = plt.subplots(1, 3, figsize=(18, 5))
