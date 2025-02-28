@@ -99,7 +99,7 @@ def classification_models(data):
 def plot_decision_boundaries(X_train, y_train, knc, log_reg, dtc):
     X_train_np = np.array(X_train)[:, :2]
     y_train_np = np.array(y_train)
-    st.dataframe(y_train.head(40))
+    st.dataframe(y_train.unique())
     knc.fit(X_train_np, y_train_np)
     log_reg.fit(X_train_np, y_train_np)
     dtc.fit(X_train_np, y_train_np)
