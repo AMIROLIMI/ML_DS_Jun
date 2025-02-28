@@ -4,62 +4,14 @@ import numpy as np
 from sklearn.impute import SimpleImputer
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.metrics import accuracy_score
-
-def classification_step(data):
-    st.subheader("🔹 Шаг 6: Классификация")
-    st.markdown("""
-    - 📊 Разделите данные на обучающую (70%) и тестовую (30%) выборки.
-    - ⚙️ Выполните стандартизацию признаков перед обучением моделей.
-    - 🤖 Постройте модели классификации на основе двух наиболее коррелированных признаков:
-        - Классификатор ближайших соседей (k=3)
-        - Логистическая регрессия (iterations=565)
-        - Дерево решений (max_depth=5)
-    """)
-    
-    # Разделение на признаки (X) и целевую переменную (y)
-    X = data.drop(columns=["A16"])
-    y = data["A16"]
-    
-    # Разделение на обучающую и тестовую выборки
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
-    
-    # Стандартизация данных
-    scaler = StandardScaler()
-    X_train = scaler.fit_transform(X_train)
-    X_test = scaler.transform(X_test)
-    
-    # Создание и обучение моделей
-    knc = KNeighborsClassifier(n_neighbors=3)
-    log_reg = LogisticRegression(max_iter=565)
-    dtc = DecisionTreeClassifier(max_depth=5)
-    
-    # Обучение моделей
-    knc.fit(X_train, y_train)
-    log_reg.fit(X_train, y_train)
-    dtc.fit(X_train, y_train)
-    
-    # Оценка моделей
-    knc_pred = knc.predict(X_test)
-    log_reg_pred = log_reg.predict(X_test)
-    dtc_pred = dtc.predict(X_test)
-    
-    # Вывод точности моделей
-    knc_acc = accuracy_score(y_test, knc_pred)
-    log_reg_acc = accuracy_score(y_test, log_reg_pred)
-    dtc_acc = accuracy_score(y_test, dtc_pred)
-    
-    st.subheader("📈 Оценка моделей")
-    st.markdown(f"📊 Точность классификатора ближайших соседей (k-NN): {knc_acc:.4f}")
-    st.markdown(f"📊 Точность логистической регрессии: {log_reg_acc:.4f}")
-    st.markdown(f"📊 Точность дерева решений: {dtc_acc:.4f}")
-
-# Вызов функции для выполнения классификации
+from sklearn.metrics import roc_curve, auc
+from mlxtend.plotting import plot_decision_regions
 
 
 
@@ -126,6 +78,90 @@ def plot_3d_graph(data):
     
     # Отображаем график
     st.pyplot(fig)
+
+def classification_models(data):
+    # Выбираем два наиболее коррелированных признака
+    correlation = data.drop(columns=["A16"]).corrwith(data["A16"]).sort_values(ascending=False)
+    top_features = correlation.head(2).index.tolist()
+    
+    X = data[top_features]
+    y = data["A16"]
+    
+    # Разделение на обучающую и тестовую выборки
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+    
+    # Стандартизация признаков
+    scaler = StandardScaler()
+    X_train = scaler.fit_transform(X_train)
+    X_test = scaler.transform(X_test)
+    
+    # Построение моделей
+    knc = KNeighborsClassifier(n_neighbors=3)
+    log_reg = LogisticRegression(max_iter=565)
+    dtc = DecisionTreeClassifier(max_depth=5)
+    
+    knc.fit(X_train, y_train)
+    log_reg.fit(X_train, y_train)
+    dtc.fit(X_train, y_train)
+
+    # Выводим результаты
+    st.subheader("🔹 Модели классификации обучены")
+    st.write("K-Nearest Neighbors, Logistic Regression, Decision Tree успешно обучены на данных.")
+    
+    return knc, log_reg, dtc, X_train, X_test, y_train, y_test
+
+def plot_decision_boundaries(X_train, y_train):
+    X_train_np = np.array(X_train)[:, :2]
+    y_train_np = np.array(y_train)
+    
+    knc = KNeighborsClassifier(n_neighbors=3)
+    log_reg = LogisticRegression(max_iter=565)
+    dtc = DecisionTreeClassifier(max_depth=5)
+    
+    knc.fit(X_train_np, y_train_np)
+    log_reg.fit(X_train_np, y_train_np)
+    dtc.fit(X_train_np, y_train_np)
+    
+    fig, axes = plt.subplots(1, 3, figsize=(18, 5))
+    classifiers = [(knc, "K-Nearest Neighbors"), (log_reg, "Logistic Regression"), (dtc, "Decision Tree")]
+    
+    for idx, (clf, title) in enumerate(classifiers):
+        plt.sca(axes[idx])  
+        plot_decision_regions(X_train_np, y_train_np, clf=clf, legend=2)
+        plt.xlabel("A2")  # Используйте наиболее коррелированные признаки
+        plt.ylabel("A3")  # Используйте наиболее коррелированные признаки
+        plt.title(title)
+    
+    plt.suptitle("Границы решений для каждого классификатора", fontsize=14)
+    plt.tight_layout(rect=[0, 0, 1, 0.95])
+    st.pyplot(fig)
+
+def plot_roc_curves(knc, log_reg, dtc, X_test, y_test):
+    y_score_knc = knc.predict_proba(X_test)[:, 1]
+    y_score_log_reg = log_reg.predict_proba(X_test)[:, 1]
+    y_score_dtc = dtc.predict_proba(X_test)[:, 1]
+    
+    fpr_knc, tpr_knc, _ = roc_curve(y_test, y_score_knc)
+    fpr_log_reg, tpr_log_reg, _ = roc_curve(y_test, y_score_log_reg)
+    fpr_dtc, tpr_dtc, _ = roc_curve(y_test, y_score_dtc)
+    
+    auc_knc = auc(fpr_knc, tpr_knc)
+    auc_log_reg = auc(fpr_log_reg, tpr_log_reg)
+    auc_dtc = auc(fpr_dtc, tpr_dtc)
+    
+    plt.plot(fpr_knc, tpr_knc, label=f'KNN (AUC = {auc_knc:.2f})', linestyle='-', color='blue')
+    plt.plot(fpr_log_reg, tpr_log_reg, label=f'Logistic Regression (AUC = {auc_log_reg:.2f})', linestyle='-', color='orange')
+    plt.plot(fpr_dtc, tpr_dtc, label=f'Decision Tree (AUC = {auc_dtc:.2f})', linestyle='-', color='green')
+    plt.plot([0, 1], [0, 1], linestyle='--', color='gray')
+    
+    plt.xlabel('FPR')
+    plt.ylabel('TPR')
+    plt.title('ROC-кривые')
+    plt.legend()
+    plt.grid()
+    st.pyplot(plt)
+
+
 
 def main():
     st.title("📊 Анализ набора данных из репозитория UCI")
@@ -218,8 +254,14 @@ def main():
         st.write(significant_features)
         # шаг 5
         plot_3d_graph(processed_data)
-        # шаг 6
-        classification_step(processed_data)
+        # Шаг 6: Классификация
+        knc, log_reg, dtc, X_train, X_test, y_train, y_test = classification_models(processed_data)
+
+         # Шаг 7: Визуализация границ решений
+        plot_decision_boundaries(X_train, y_train)
+
+        # Шаг 8: ROC-кривые
+        plot_roc_curves(knc, log_reg, dtc, X_test, y_test)
 
 if __name__ == "__main__":
     main()
