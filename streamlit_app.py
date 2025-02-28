@@ -53,6 +53,7 @@ def feature_selection(data):
 
 def plot_3d_graph(data):
     st.subheader("🔹 Шаг 5: Визуализация данных")
+    st.dataframe(y.unique())
     st.markdown("""
     - 🎨 Постройте 3D-график точек данных, используя разные цвета и маркеры для классов.
     - 🏷 Подпишите оси названиями признаков.
@@ -72,22 +73,17 @@ def plot_3d_graph(data):
     
     # Заголовок
     ax.set_title('3D-график данных: A3, A8, A11 (Жёлтый цвет положительный класс, а остальные отрицательный класс.)')
-    
-    # Легенда
     fig.colorbar(scatter, ax=ax, label='Класс (A16)')
-    
-    # Отображаем график
     st.pyplot(fig)
-
+    
 def classification_models(data):
     X = data.drop(columns=["A16"])
     y = data["A16"]
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=11)
-    st.dataframe(y.unique())
+    st.dataframe(data["A16"].head(num_rows))
     scaler = StandardScaler()
     X_train = scaler.fit_transform(X_train)
     X_test = scaler.transform(X_test)
-    st.dataframe(y_train.unique())
     knc = KNeighborsClassifier(n_neighbors=3)
     log_reg = LogisticRegression(max_iter=565)
     dtc = DecisionTreeClassifier(max_depth = 5)
