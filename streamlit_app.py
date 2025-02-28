@@ -91,7 +91,7 @@ def plot_decision_boundaries(X_train, y_train, knc, log_reg, dtc):
     classifiers = [(knc, "K-Nearest Neighbors"), (log_reg, "Logistic Regression"), (dtc, "Decision Tree")]
     for idx, (clf, title) in enumerate(classifiers):
         plt.sca(axes[idx])  
-        plot_decision_regions(X_train_np, y_train_np, clf=clf, legend=2)
+        plot_decision_regions(X_train, y_train, clf=clf, legend=2)
         plt.xlabel("A2")
         plt.ylabel("A3")
         plt.title(title)
