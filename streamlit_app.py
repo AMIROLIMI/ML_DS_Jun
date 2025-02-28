@@ -10,7 +10,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.metrics import roc_curve, auc
+from sklearn.metrics import roc_curve, auc, roc_auc_score
 from mlxtend.plotting import plot_decision_regions
 
 def load_data(url):
@@ -109,6 +109,23 @@ def plot_roc_curves(knc, log_reg, dtc, X_test, y_test):
     plt.grid()
     st.pyplot(plt)
 
+def evaluate_models(knc, log_reg, dtc, X_train, X_test, y_train, y_test):
+    auc_train_knc = roc_auc_score(y_train, knc.predict_proba(X_train)[:, 1])
+    auc_test_knc = roc_auc_score(y_test, knc.predict_proba(X_test)[:, 1])
+    auc_train_log_reg = roc_auc_score(y_train, log_reg.predict_proba(X_train)[:, 1])
+    auc_test_log_reg = roc_auc_score(y_test, log_reg.predict_proba(X_test)[:, 1])
+    auc_train_dtc = roc_auc_score(y_train, dtc.predict_proba(X_train)[:, 1])
+    auc_test_dtc = roc_auc_score(y_test, dtc.predict_proba(X_test)[:, 1])
+    results = {"Модель": ["KNN", "Logistic Regression", "Decision Tree"],
+                "AUC (Train)": [auc_train_knc, auc_train_log_reg, auc_train_dtc],
+                "AUC (Test)": [auc_test_knc, auc_test_log_reg, auc_test_dtc]}
+
+    st.write("🏆 **Сравнение моделей по AUC**")
+    st.dataframe(results)
+    best_model = max(results["Модель"], key=lambda m: results["AUC (Test)"][results["Модель"].index(m)])
+    st.success(f"🔹 **Лучшая модель на тесте**: {best_model} (по AUC)")
+
+
 def main():
     st.title("📊 Анализ набора данных из репозитория UCI")
     st.subheader("🔹 Шаг 1: Загрузка данных")
@@ -174,6 +191,8 @@ def main():
         #plot_decision_boundaries(X_train, y_train, knc, log_reg, dtc)
         st.subheader("🔹 Шаг 8: ROC-кривые") 
         plot_roc_curves(knc, log_reg, dtc, X_test, y_test)
+        st.subheader("🔹 9. Оценка качества классификации")
+        evaluate_models(knc, log_reg, dtc, X_train, X_test, y_train, y_test)
 
 if __name__ == "__main__":
     main()
