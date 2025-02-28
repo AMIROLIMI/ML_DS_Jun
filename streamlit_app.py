@@ -191,7 +191,7 @@ def analyze_classification_results(knc, log_reg, dtc, X_test, y_test):
     evaluate_model(dtc, X_test, y_test, "Decision Tree")
 
 def visualize_feature_distributions(data):
-    st.subheader("Распределение признаков по классам")
+    st.subheader("Распределение признаков по классам (можно было это график не вывести так как грубо говоря это уже есть в нижнем графике. Но всё таки оставлю :)")
     fig, axes = plt.subplots(1, 3, figsize=(18, 5))
     features = ["A11", "A8", "A3"]
     for i, feature in enumerate(features):
