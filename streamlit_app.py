@@ -255,8 +255,9 @@ def main():
         # шаг 5
         plot_3d_graph(processed_data)
         st.subheader("🔹 Шаг 6: Классификация")
+        st.dataframe(processed_data.head(num_rows))
         knc, log_reg, dtc, X_train, X_test, y_train, y_test = classification_models(processed_data)
-        st.dataframe(data.head(num_rows))
+        st.dataframe(processed_data.head(num_rows))
         st.subheader("🔹 Шаг 7: Визуализация границ решений")
         plot_decision_boundaries(X_train, y_train)
 
