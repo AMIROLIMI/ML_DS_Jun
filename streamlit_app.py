@@ -85,7 +85,7 @@ def main():
         """)
         
         if st.button("🔄 Обработать данные"):
-            processed_data = preprocess_features(processed_data)
+            processed_data = preprocess_features(data)
             st.subheader("Обработанные данные")
             st.dataframe(processed_data.head(num_rows))
             
