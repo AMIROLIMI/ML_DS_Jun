@@ -94,7 +94,25 @@ def classification_models(data):
     scaler = StandardScaler()
     X_train = scaler.fit_transform(X_train)
     X_test = scaler.transform(X_test)
+    import numpy as np
+
+    # Проверяем NaN и бесконечные значения
+    if np.isnan(X_train).sum() > 0 or np.isinf(X_train).sum() > 0:
+        st.error("❌ В данных X_train есть NaN или бесконечные значения!")
+        st.write(pd.DataFrame(X_train).isna().sum())  # Вывод количества NaN в каждом признаке
     
+    if np.isnan(y_train).sum() > 0 or np.isinf(y_train).sum() > 0:
+        st.error("❌ В y_train есть NaN или бесконечные значения!")
+    
+    # Проверяем, есть ли признаки с одинаковыми значениями
+    constant_columns = [col for col in range(X_train.shape[1]) if np.std(X_train[:, col]) == 0]
+    if constant_columns:
+        st.error(f"❌ Эти признаки имеют одинаковые значения во всех записях: {constant_columns}")
+    
+    # Проверяем, содержит ли y_train только один класс
+    if len(set(y_train)) == 1:
+        st.error("❌ В y_train только один класс! Логистическая регрессия требует минимум два класса.")
+
     # Построение моделей
     knc = KNeighborsClassifier(n_neighbors=3)
     log_reg = LogisticRegression(max_iter=565)
