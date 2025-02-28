@@ -261,7 +261,6 @@ def main():
         st.subheader("🔹 10. Дополнительно")
         analyze_classification_results(knc, log_reg, dtc, X_test, y_test)
         visualize_data(processed_data)
-        evaluate_models(knc, log_reg, dtc, X_train, X_test, y_train, y_test)
 
 if __name__ == "__main__":
     main()
