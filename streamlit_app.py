@@ -103,6 +103,9 @@ def plot_decision_boundaries(X_train, y_train, knc, log_reg, dtc):
 
 
 def plot_roc_curves(knc, log_reg, dtc, X_test, y_test):
+    st.write("Признаки X_train:", list(processed_data.drop(columns=["A16"]).columns))
+    st.write("Признаки X_test:", list(processed_data.drop(columns=["A16"]).columns))
+
     y_score_knc = knc.predict_proba(X_test)[:, 1]
     y_score_log_reg = log_reg.predict_proba(X_test)[:, 1]
     y_score_dtc = dtc.predict_proba(X_test)[:, 1]
@@ -218,7 +221,7 @@ def main():
         st.subheader("🔹 Шаг 6: Классификация")
         knc, log_reg, dtc, X_train, X_test, y_train, y_test = classification_models(processed_data)
         st.subheader("🔹 Шаг 7: Визуализация границ решений")
-        plot_decision_boundaries(X_train, y_train, knc, log_reg, dtc)
+        #plot_decision_boundaries(X_train, y_train, knc, log_reg, dtc)
         st.subheader("🔹 Шаг 8: ROC-кривые") 
         plot_roc_curves(knc, log_reg, dtc, X_test, y_test)
 
