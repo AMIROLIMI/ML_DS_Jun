@@ -97,7 +97,6 @@ def plot_decision_boundaries(X_train, y_train, knc, log_reg, dtc):
         plt.title(title)
     plt.suptitle("граница решений для каждого классификатора ", fontsize=14)
     plt.tight_layout(rect=[0, 0, 1, 0.95])
-    plt.show()
     st.pyplot(plt)
 
 
@@ -121,7 +120,6 @@ def plot_roc_curves(knc, log_reg, dtc, X_test, y_test):
     plt.title('ROC-кривые')
     plt.legend()
     plt.grid()
-    plt.show()
     st.pyplot(plt)
 
 def main():
