@@ -64,15 +64,24 @@ def feature_selection(data):
     return significant_features_with_correlation.head(3).index.tolist()
 
 def plot_3d_graph(data):
+    st.subheader("Выбор признаков для 3D-графика")
+    
+    available_features = list(data.columns)
+    available_features.remove("A16") 
+    feature_x = st.selectbox("Выберите первый признак (X-ось):", available_features, index=available_features.index("A11"))
+    feature_y = st.selectbox("Выберите второй признак (Y-ось):", available_features, index=available_features.index("A8"))
+    feature_z = st.selectbox("Выберите третий признак (Z-ось):", available_features, index=available_features.index("A3"))
     fig = plt.figure(figsize=(10, 8))
     ax = fig.add_subplot(111, projection='3d')
-    scatter = ax.scatter(data['A11'], data['A8'], data['A3'], c=data['A16'], marker='o', cmap='viridis')
-    ax.set_xlabel('A11')
-    ax.set_ylabel('A8')
-    ax.set_zlabel('A3')
-    ax.set_title('3D-график данных: A3, A8, A11 (Жёлтый цвет положительный класс, а остальные отрицательный класс.)')
+    scatter = ax.scatter(data[feature_x], data[feature_y], data[feature_z], c=data['A16'], marker='o', cmap='viridis')
+    ax.set_xlabel(feature_x)
+    ax.set_ylabel(feature_y)
+    ax.set_zlabel(feature_z)
+    ax.set_title(f'3D-график данных: {feature_x}, {feature_y}, {feature_z}')
+    
     fig.colorbar(scatter, ax=ax, label='Класс (A16)')
     st.pyplot(fig)
+
     
 def classification_models(data):
     X = data.drop(columns=["A16"])
