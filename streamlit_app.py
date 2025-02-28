@@ -82,12 +82,12 @@ def plot_3d_graph(data):
 def classification_models(data):
     X = data.drop(columns=["A16"])
     y = data["A16"]
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
-    
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=11)
+    st.dataframe(y_train.unique())
     scaler = StandardScaler()
     X_train = scaler.fit_transform(X_train)
     X_test = scaler.transform(X_test)
-    
+    st.dataframe(y_train.unique())
     knc = KNeighborsClassifier(n_neighbors=3)
     log_reg = LogisticRegression(max_iter=565)
     dtc = DecisionTreeClassifier(max_depth = 5)
@@ -99,7 +99,7 @@ def classification_models(data):
 def plot_decision_boundaries(X_train, y_train, knc, log_reg, dtc):
     X_train_np = np.array(X_train)[:, :2]
     y_train_np = np.array(y_train)
-    st.dataframe(y_train.unique())
+    
     knc.fit(X_train_np, y_train_np)
     log_reg.fit(X_train_np, y_train_np)
     dtc.fit(X_train_np, y_train_np)
