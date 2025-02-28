@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
@@ -78,7 +78,12 @@ def classification_models(data):
     X = data.drop(columns=["A16"])
     y = data["A16"]
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=11)
-    scaler = StandardScaler()
+    scaler_option = st.selectbox("Выберите метод нормализации:", ["StandardScaler", "MinMaxScaler"])
+    if scaler_option == "StandardScaler":
+        scaler = StandardScaler()
+    else:
+        scaler = MinMaxScaler()
+        
     X_train = scaler.fit_transform(X_train)
     X_test = scaler.transform(X_test)
     knc = KNeighborsClassifier(n_neighbors=3)
