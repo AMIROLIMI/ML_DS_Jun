@@ -192,18 +192,22 @@ def analyze_classification_results(knc, log_reg, dtc, X_test, y_test):
     evaluate_model(dtc, X_test, y_test, "Decision Tree")
 
 def visualize_feature_distributions(data):
+    st.subheader("Распределение признаков по классам")
     fig, axes = plt.subplots(1, 3, figsize=(18, 5))
     features = ["A11", "A8", "A3"]
     for i, feature in enumerate(features):
         sns.histplot(data, x=feature, hue="A16", element="step", bins=20, ax=axes[i], palette="viridis")
         axes[i].set_title(f"Распределение {feature} по классам")
+    
     plt.tight_layout()
     st.pyplot(fig)
 
 def visualize_pairplot(data):
+    st.subheader("Взаимосвязь признаков")
     selected_features = ["A11", "A8", "A3", "A16"]
     pairplot_fig = sns.pairplot(data[selected_features], hue="A16", palette="viridis")
     st.pyplot(pairplot_fig)
+
 
 def visualize_correlation_matrix(data):
     corr_matrix = data.corr()
