@@ -153,8 +153,6 @@ def evaluate_models(knc, log_reg, dtc, X_train, X_test, y_train, y_test):
 def evaluate_model(model, X_test, y_test, model_name):
     # Предсказания модели
     y_pred = model.predict(X_test)
-
-    # Матрица ошибок
     cm = confusion_matrix(y_test, y_pred)
     fig, ax = plt.subplots(figsize=(6, 4))
     sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=["Class 0", "Class 1"], yticklabels=["Class 0", "Class 1"])
@@ -162,17 +160,39 @@ def evaluate_model(model, X_test, y_test, model_name):
     plt.ylabel("Истинный класс")
     plt.title(f"Матрица ошибок: {model_name}")
     st.pyplot(fig)
-
-    # Отчёт о классификации (F1-score, Precision, Recall)
-    st.subheader(f"📊 Метрики модели {model_name}")
+    st.subheader(f"Метрики модели {model_name}")
     report = classification_report(y_test, y_pred, output_dict=True)
     st.write(pd.DataFrame(report).transpose())
-
-# Вызов функции для всех моделей
 def analyze_classification_results(knc, log_reg, dtc, X_test, y_test):
     evaluate_model(knc, X_test, y_test, "K-Nearest Neighbors")
     evaluate_model(log_reg, X_test, y_test, "Logistic Regression")
     evaluate_model(dtc, X_test, y_test, "Decision Tree")
+
+def visualize_feature_distributions(data):
+    fig, axes = plt.subplots(1, 3, figsize=(18, 5))
+    features = ["A11", "A8", "A3"]
+    for i, feature in enumerate(features):
+        sns.histplot(data, x=feature, hue="A16", element="step", bins=20, ax=axes[i], palette="viridis")
+        axes[i].set_title(f"Распределение {feature} по классам")
+    plt.tight_layout()
+    st.pyplot(fig)
+
+def visualize_pairplot(data):
+    selected_features = ["A11", "A8", "A3", "A16"]
+    pairplot_fig = sns.pairplot(data[selected_features], hue="A16", palette="viridis")
+    st.pyplot(pairplot_fig)
+
+def visualize_correlation_matrix(data):
+    corr_matrix = data.corr()
+    fig, ax = plt.subplots(figsize=(10, 8))
+    sns.heatmap(corr_matrix, annot=True, fmt=".2f", cmap="coolwarm", ax=ax)
+    plt.title("Матрица корреляций признаков")
+    st.pyplot(fig)
+
+def visualize_data(data):
+    visualize_feature_distributions(data)
+    visualize_pairplot(data)
+    visualize_correlation_matrix(data)
 
 def main():
     st.title("📊 Анализ набора данных из репозитория UCI")
@@ -241,8 +261,9 @@ def main():
         plot_roc_curves(knc, log_reg, dtc, X_test, y_test)
         st.subheader("🔹 9. Оценка качества классификации")
         evaluate_models(knc, log_reg, dtc, X_train, X_test, y_train, y_test)
-
+        st.subheader("🔹 10. Дополнительно")
         analyze_classification_results(knc, log_reg, dtc, X_test, y_test)
+        visualize_data(processed_data)
 
 if __name__ == "__main__":
     main()
