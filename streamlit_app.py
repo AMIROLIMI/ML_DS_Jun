@@ -87,28 +87,26 @@ def classification_models(data):
     X = data[top_features]
     y = data["A16"]
     
-
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
-
-
+    # Разделение на обучающую и тестовую выборки
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+    
     # Стандартизация признаков
     scaler = StandardScaler()
     X_train = scaler.fit_transform(X_train)
     X_test = scaler.transform(X_test)
-
     
-    # knc = KNeighborsClassifier(n_neighbors=3)
-    log_reg = LogisticRegression(max_iter=565)
+    # Построение моделей
+    knc = KNeighborsClassifier(n_neighbors=3)
     dtc = DecisionTreeClassifier(max_depth=5)
     
-    log_reg.fit(X_train, y_train)
+    knc.fit(X_train, y_train)
     dtc.fit(X_train, y_train)
 
     # Выводим результаты
     st.subheader("🔹 Модели классификации обучены")
     st.write("K-Nearest Neighbors, Logistic Regression, Decision Tree успешно обучены на данных.")
     
-    return  log_reg, dtc, X_train, X_test, y_train, y_test
+    return knc,  dtc, X_train, X_test, y_train, y_test
 
 def plot_decision_boundaries(X_train, y_train):
     X_train_np = np.array(X_train)[:, :2]
@@ -252,7 +250,7 @@ def main():
         plot_3d_graph(processed_data)
         st.subheader("🔹 Шаг 6: Классификация")
         st.dataframe(processed_data.head(num_rows))
-        log_reg, dtc, X_train, X_test, y_train, y_test = classification_models(processed_data)
+        knc, dtc, X_train, X_test, y_train, y_test = classification_models(processed_data)
         st.dataframe(processed_data.head(num_rows))
         st.subheader("🔹 Шаг 7: Визуализация границ решений")
         plot_decision_boundaries(X_train, y_train)
