@@ -12,12 +12,13 @@ def load_data(url):
 def preprocess_features(data):
     data = data.drop(columns=["A1", "A4", "A5", "A6", "A7", "A9", "A10", "A12", "A13"])
     data.replace("?", np.nan, inplace=True)
-    
-    imputer = SimpleImputer(strategy='mean')
-    data = pd.DataFrame(imputer.fit_transform(data), columns=data.columns)
+
     
     for col in ["A11", "A14", "A15", "A16"]:
         data[col] = data[col].astype(int)
+
+    imputer = SimpleImputer(strategy='mean')
+    data = pd.DataFrame(imputer.fit_transform(data), columns=data.columns)
     
     return data
 
