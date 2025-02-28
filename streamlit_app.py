@@ -219,8 +219,8 @@ def main():
         st.subheader("🔹 Шаг 7: Визуализация границ решений")
         #plot_decision_boundaries(X_train, y_train, knc, log_reg, dtc)
         st.subheader("🔹 Шаг 8: ROC-кривые") 
-        st.write("Признаки X_train:", list(((X_test)[:, :2])).columns))
-        st.write("Признаки X_test:", list(((X_test)[:, :2])).columns))
+        st.write("Признаки X_train:", list(((X_test)[:, :2]).columns))
+        st.write("Признаки X_test:", list(((X_test)[:, :2]).columns))
 
         plot_roc_curves(knc, log_reg, dtc, X_test, y_test)
 
