@@ -80,31 +80,19 @@ def plot_3d_graph(data):
     st.pyplot(fig)
 
 def classification_models(data):
-    # Выбираем два наиболее коррелированных признака
-    correlation = data.drop(columns=["A16"]).corrwith(data["A16"]).sort_values(ascending=False)
-    top_features = correlation.head(2).index.tolist()
-    
-    X = data[top_features]
+    X = data.drop(columns=["A16"])
     y = data["A16"]
-    
-    # Разделение на обучающую и тестовую выборки
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
-    
-    # Стандартизация признаков
+
     scaler = StandardScaler()
     X_train = scaler.fit_transform(X_train)
-    X_test = scaler.transform(X_test)
-    
-    # Построение моделей
+    X_ttest = scaler.transform(X_test)
     knc = KNeighborsClassifier(n_neighbors=3)
     log_reg = LogisticRegression(max_iter=565)
-    dtc = DecisionTreeClassifier(max_depth=5)
-    
+    dtc = DecisionTreeClassifier(max_depth = 5)
     knc.fit(X_train, y_train)
     log_reg.fit(X_train, y_train)
     dtc.fit(X_train, y_train)
-
-    # Выводим результаты
     st.subheader("🔹 Модели классификации обучены")
     st.write("K-Nearest Neighbors, Logistic Regression, Decision Tree успешно обучены на данных.")
     
