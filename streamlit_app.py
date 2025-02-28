@@ -14,6 +14,7 @@ from sklearn.metrics import roc_curve, auc, roc_auc_score
 from mlxtend.plotting import plot_decision_regions
 from sklearn.metrics import confusion_matrix, classification_report
 import seaborn as sns
+import io
 
 def evaluate_model(model, X_test, y_test, model_name):
     y_pred = model.predict(X_test)
@@ -42,23 +43,13 @@ def load_data(url):
 
 def preprocess_features(data):
     data = data.drop(columns=["A1", "A4", "A5", "A6", "A7", "A9", "A10", "A12", "A13"])
-    
-    # Преобразуем метки классов
     data["A16"] = data["A16"].apply(lambda x: 1 if x == "+" else 0)
-    
-    # Заменяем "?" на NaN
     data.replace("?", np.nan, inplace=True)
-    
-    # Преобразуем все возможные числовые столбцы в float
     for col in data.columns:
         data[col] = pd.to_numeric(data[col], errors="coerce")
-    
-    # Заполняем пропущенные значения средним соответствующего класса
     for col in data.columns:
         if col != "A16":  
             data[col] = data.groupby("A16")[col].transform(lambda x: x.fillna(x.mean()))
-    
-    # Преобразуем определенные столбцы в int
     for col in ["A11", "A14", "A15", "A16"]:
         data[col] = data[col].astype(int)
 
@@ -246,8 +237,12 @@ def main():
         st.subheader("📉 Количество пропущенных значений до обработки данных")
         st.write(data.isna().sum())
 
-        st.subheader("🔢 Информация о данных до обработки")
-        st.write(data.info())
+        buffer = io.StringIO()
+        data.info(buf=buffer)
+        info_str = buffer.getvalue()
+
+        st.subheader("🔢 Информация о данных после обработки")
+        st.text(info_str)
         st.subheader("Уникальные значения в столбце A16 до обработки")
         st.write(data["A16"].unique())
         st.markdown(""" 
@@ -271,8 +266,11 @@ def main():
         processed_data = preprocess_features(data)
         st.subheader("Обработанные данные")
         st.dataframe(processed_data.head(num_rows))
+        buffer = io.StringIO()
+        processed_data.info(buf=buffer)
+        info_str = buffer.getvalue()
         st.subheader("🔢 Информация о данных после обработки")
-        st.write(processed_data.info())
+        st.text(info_str)
         st.subheader("📉 Количество пропущенных значений после обработки данных")
         st.write(processed_data.isna().sum())
 
