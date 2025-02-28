@@ -8,19 +8,6 @@ def load_data(url):
     data.columns = [f"A{i}" for i in range(1, 17)]
     return data
 
-def preprocess_target(data):
-    st.markdown("""
-    В этих данных нет пропущенных значений, но есть неправильные значения как "?".
-    Эти значения будут удалены и заменены средними значениями. А классов 2.
-    """)
-    
-    data = data.dropna(subset=["A16"])
-    class_counts = data["A16"].value_counts()
-    if len(class_counts) > 2:
-        majority_class = class_counts.idxmax()
-        data["A16"] = data["A16"].apply(lambda x: 1 if x == majority_class else 0)
-    
-    return data
 
 def preprocess_features(data):
     data = data.drop(columns=["A1", "A4", "A5", "A6", "A7", "A9", "A10", "A12", "A13"])
@@ -71,13 +58,16 @@ def main():
         
         if st.button("🔄 Обработать метки классов"):
             # Преобразование меток классов
+            st.markdown("""
+            В этих данных нет пропущенных значений, но есть неправильные значения как "?".
+            Эти значения будут удалены и заменены средними значениями. А классов 2.
+            """)
             data["A16"] = data["A16"].apply(lambda x: 1 if x == "+" else 0)
             
             st.markdown("""
             Мы заменили символ "+" на 1 и символ "-" на 0 в столбце A16.
             """)
 
-            processed_data = preprocess_target(data)
             st.subheader("Обработанные метки классов")
             st.dataframe(processed_data.head(num_rows))
 
