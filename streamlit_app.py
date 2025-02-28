@@ -58,8 +58,13 @@ def main():
     
     if url:
         data = load_data(url)
+        
+        # Слайдер для выбора количества строк
+        num_rows = st.slider("Выберите количество строк для отображения:", 
+                             min_value=1, max_value=len(data), value=5)
+        
         st.subheader("Предварительный просмотр данных")
-        st.dataframe(data.head())
+        st.dataframe(data.head(num_rows))
         
         # Выбор стратегии обработки пропущенных значений
         impute_strategy = st.selectbox("Выберите стратегию для заполнения пропущенных значений:", 
@@ -68,7 +73,7 @@ def main():
         if st.button("🔄 Обработать данные"):
             processed_data = preprocess_data(data, impute_strategy)
             st.subheader("Обработанные данные")
-            st.dataframe(processed_data.head())
+            st.dataframe(processed_data.head(num_rows))
             
             st.subheader("🔢 Информация о данных")
             st.text(processed_data.info())
