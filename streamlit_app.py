@@ -96,7 +96,7 @@ def classification_models(data):
     
     return knc, log_reg, dtc, X_train, X_test, y_train, y_test
 
-def plot_decision_boundaries(X_train, y_train):
+def plot_decision_boundaries(X_train, y_train, knc, log_reg, dtc):
     X_train_np = np.array(X_train)[:, :2]
     y_train_np = np.array(y_train)
     knc.fit(X_train_np, y_train_np)
@@ -231,12 +231,9 @@ def main():
         # шаг 5
         plot_3d_graph(processed_data)
         st.subheader("🔹 Шаг 6: Классификация")
-        st.dataframe(processed_data.head(num_rows))
         knc, log_reg, dtc, X_train, X_test, y_train, y_test = classification_models(processed_data)
-        st.dataframe(processed_data.head(num_rows))
         st.subheader("🔹 Шаг 7: Визуализация границ решений")
-        plot_decision_boundaries(X_train, y_train)
-
+        plot_decision_boundaries(X_train, y_train, knc, log_reg, dtc)
         st.subheader("🔹 Шаг 7: ROC-кривые") 
         plot_roc_curves(knc, log_reg, dtc, X_test, y_test)
 
