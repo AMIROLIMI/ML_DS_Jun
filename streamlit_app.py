@@ -68,11 +68,9 @@ def classification_models(data):
     knc = KNeighborsClassifier(n_neighbors=3)
     log_reg = LogisticRegression(max_iter=565)
     dtc = DecisionTreeClassifier(max_depth = 5)
-    X_train_np = np.array(X_train)[:, :2]
-    y_train_np = np.array(y_train)
-    knc.fit(X_train_np, y_train_np)
-    log_reg.fit(X_train_np, y_train_np)
-    dtc.fit(X_train_np, y_train_np)
+    knc.fit(X_train, y_train)
+    log_reg.fit(X_train, y_train)
+    dtc.fit(X_train, y_train)
     st.subheader("🔹 Модели классификации обучены")
     st.write("K-Nearest Neighbors, Logistic Regression, Decision Tree успешно обучены на данных.")
     return knc, log_reg, dtc, X_train, X_test, y_train, y_test
@@ -95,6 +93,11 @@ def plot_roc_curves(knc, log_reg, dtc, X_test, y_test):
     y_score_knc = knc.predict_proba(X_test)[:, 1]
     y_score_log_reg = log_reg.predict_proba(X_test)[:, 1]
     y_score_dtc = dtc.predict_proba(X_test)[:, 1]
+    X_train_np = np.array(X_train)[:, :2]
+    y_train_np = np.array(y_train)
+    knc.fit(X_train_np, y_train_np)
+    log_reg.fit(X_train_np, y_train_np)
+    dtc.fit(X_train_np, y_train_np)
     fpr_knc, tpr_knc, _ = roc_curve(y_test, y_score_knc)
     fpr_log_reg, tpr_log_reg, _ = roc_curve(y_test, y_score_log_reg)
     fpr_dtc, tpr_dtc, _ = roc_curve(y_test, y_score_dtc)
