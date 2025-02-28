@@ -120,10 +120,9 @@ def evaluate_models(knc, log_reg, dtc, X_train, X_test, y_train, y_test):
                 "AUC (Train)": [auc_train_knc, auc_train_log_reg, auc_train_dtc],
                 "AUC (Test)": [auc_test_knc, auc_test_log_reg, auc_test_dtc]}
 
-    st.write("🏆 **Сравнение моделей по AUC**")
+    st.write("**Сравнение моделей по AUC**")
     st.dataframe(results)
-    best_model = max(results["Модель"], key=lambda m: results["AUC (Test)"][results["Модель"].index(m)])
-    st.success(f"🔹 **Лучшая модель на тесте**: {best_model} (по AUC)")
+    st.write("Видно что у маделей KNN и Decission Tree переобучение так как у них на трейне высокий показатель а на тесте низкий. А у модели Logistic Regression такого нет. по этому будем считать что самый хорошый модель это - Logistic Regression")
 
 
 def main():
