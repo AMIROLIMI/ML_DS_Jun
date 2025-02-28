@@ -241,7 +241,7 @@ def main():
         data.info(buf=buffer)
         info_str = buffer.getvalue()
 
-        st.subheader("🔢 Информация о данных после обработки")
+        st.subheader("🔢 Информация о данных до обработки")
         st.text(info_str)
         st.subheader("Уникальные значения в столбце A16 до обработки")
         st.write(data["A16"].unique())
@@ -288,7 +288,7 @@ def main():
         knc, log_reg, dtc, X_train, X_test, y_train, y_test = classification_models(processed_data)
         evaluate_models(knc, log_reg, dtc, X_train, X_test, y_train, y_test)
         st.subheader("🔹 Шаг 7: Визуализация границ решений")
-        #plot_decision_boundaries(X_train, y_train, knc, log_reg, dtc)
+        plot_decision_boundaries(X_train, y_train, knc, log_reg, dtc)
         st.subheader("🔹 Шаг 8: ROC-кривые") 
         plot_roc_curves(knc, log_reg, dtc, X_test, y_test)
         st.subheader("🔹 9. Оценка качества классификации")
