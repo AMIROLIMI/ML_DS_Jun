@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 from sklearn.impute import SimpleImputer
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 
 def load_data(url):
     data = pd.read_csv(url, header=None)
@@ -38,6 +40,34 @@ def feature_selection(data):
     st.write(significant_features_with_correlation.head(3))
 
     return significant_features_with_correlation.head(3).index.tolist()
+
+def plot_3d_graph(data):
+    st.subheader("🔹 Шаг 5: Визуализация данных")
+    st.markdown("""
+    - 🎨 Постройте 3D-график точек данных, используя разные цвета и маркеры для классов.
+    - 🏷 Подпишите оси названиями признаков.
+    - 🖼 Добавьте заголовок с названием набора данных и легенду.
+    """)
+    
+    # Создаем 3D график
+    fig = plt.figure(figsize=(10, 8))
+    ax = fig.add_subplot(111, projection='3d')
+    
+    scatter = ax.scatter(data['A11'], data['A8'], data['A3'], c=data['A16'], marker='o', cmap='viridis')
+    
+    # Подпись осей
+    ax.set_xlabel('A11')
+    ax.set_ylabel('A8')
+    ax.set_zlabel('A3')
+    
+    # Заголовок
+    ax.set_title('3D-график данных: A3, A8, A11 (Жёлтый цвет положительный класс, а остальные отрицательный класс.)')
+    
+    # Легенда
+    fig.colorbar(scatter, ax=ax, label='Класс (A16)')
+    
+    # Отображаем график
+    st.pyplot(fig)
 
 def main():
     st.title("📊 Анализ набора данных из репозитория UCI")
@@ -128,6 +158,8 @@ def main():
         significant_features = feature_selection(processed_data)
         st.subheader("🔹 Три наиболее значимые признаки:")
         st.write(significant_features)
+        # шаг 5
+        plot_3d_graph(processed_data)
 
 if __name__ == "__main__":
     main()
