@@ -97,7 +97,7 @@ def plot_roc_curves(knc, log_reg, dtc, X_test, y_test):
     auc_knc = auc(fpr_knc, tpr_knc)
     auc_log_reg = auc(fpr_log_reg, tpr_log_reg)
     auc_dtc = auc(fpr_dtc, tpr_dtc)
-    plt.figure(figsize=(10, 10))
+    plt.figure(figsize=(10, 8))
     plt.plot(fpr_knc, tpr_knc, label=f'KNN (AUC = {auc_knc:.2f})', linestyle='-', color='blue')
     plt.plot(fpr_log_reg, tpr_log_reg, label=f'Logistic Regression (AUC = {auc_log_reg:.2f})', linestyle='-', color='orange')
     plt.plot(fpr_dtc, tpr_dtc, label=f'Decision Tree (AUC = {auc_dtc:.2f})', linestyle='-', color='green')
