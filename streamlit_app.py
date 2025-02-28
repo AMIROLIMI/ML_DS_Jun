@@ -83,7 +83,7 @@ def classification_models(data):
     
     X_train = scaler.fit_transform(X_train)
     X_test = scaler.transform(X_test)
-
+    st.write("По умолчанию стоят те гиперпарамитры которые вы указали в индивиальных задач")
     kn_neighbors = st.slider("Число соседей (k) для KNN:", min_value=1, max_value=15, value=3)
     log_max_iter = st.slider("Макс. итераций для логистической регрессии:", min_value=100, max_value=1000, value=565, step=50)
     dt_max_depth = st.slider("Макс. глубина дерева решений:", min_value=1, max_value=20, value=5)
