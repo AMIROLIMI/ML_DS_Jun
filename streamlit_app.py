@@ -24,7 +24,6 @@ def load_data(url):
 def preprocess_features(data):
     data = data.drop(columns=["A1", "A4", "A5", "A6", "A7", "A9", "A10", "A12", "A13"])
     data["A16"] = data["A16"].apply(lambda x: 1 if x == "+" else 0)
-    st.dataframe(data["A16"].head(690))
     data.replace("?", np.nan, inplace=True)
     imputer = SimpleImputer(strategy='mean')
     data = pd.DataFrame(imputer.fit_transform(data), columns=data.columns)
@@ -33,23 +32,17 @@ def preprocess_features(data):
     return data
     
 def feature_selection(data):
-    # 1. Корреляция с таргетом (A16)
     correlation_with_target = data.drop(columns=["A16"]).corrwith(data["A16"]).sort_values(ascending=False)
     st.subheader("🔹 Корреляция признаков с таргетом (A16)")
     st.write(correlation_with_target)
-
-    # 2. Количество уникальных значений в каждом признаке
     unique_values_count = data.nunique()
     st.subheader("🔹 Количество уникальных значений в каждом признаке")
     st.write(unique_values_count)
-
-    # 3. Отбор признаков с более чем 10 уникальными значениями
     significant_features = unique_values_count[unique_values_count > 10].index.tolist()
     significant_features_with_correlation = correlation_with_target[significant_features].sort_values(ascending=False)
     
     st.subheader("🔹 Три наиболее значимые признаки с более чем 10 уникальными значениями")
     st.write(significant_features_with_correlation.head(3))
-    st.dataframe(data["A16"].head(690))
 
     return significant_features_with_correlation.head(3).index.tolist()
 
@@ -61,19 +54,14 @@ def plot_3d_graph(data):
     - 🏷 Подпишите оси названиями признаков.
     - 🖼 Добавьте заголовок с названием набора данных и легенду.
     """)
-    
-    # Создаем 3D график
+
     fig = plt.figure(figsize=(10, 8))
     ax = fig.add_subplot(111, projection='3d')
     
     scatter = ax.scatter(data['A11'], data['A8'], data['A3'], c=data['A16'], marker='o', cmap='viridis')
-    
-    # Подпись осей
     ax.set_xlabel('A11')
     ax.set_ylabel('A8')
     ax.set_zlabel('A3')
-    
-    # Заголовок
     ax.set_title('3D-график данных: A3, A8, A11 (Жёлтый цвет положительный класс, а остальные отрицательный класс.)')
     fig.colorbar(scatter, ax=ax, label='Класс (A16)')
     st.pyplot(fig)
@@ -82,7 +70,6 @@ def classification_models(data):
     X = data.drop(columns=["A16"])
     y = data["A16"]
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=11)
-    st.dataframe(data["A16"].head(690))
     scaler = StandardScaler()
     X_train = scaler.fit_transform(X_train)
     X_test = scaler.transform(X_test)
