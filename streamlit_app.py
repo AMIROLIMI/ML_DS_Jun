@@ -157,7 +157,7 @@ def evaluate_models(knc, log_reg, dtc, X_train, X_test, y_train, y_test):
 
     st.write("**Сравнение моделей по AUC**")
     st.dataframe(results)
-    st.write("Видно что у маделей KNN и Decission Tree переобучение так как у них на трейне высокий показатель а на тесте низкий. А у модели Logistic Regression такого нет. по этому будем считать что самый хорошый модель это - Logistic Regression")
+    
 def evaluate_model(model, X_test, y_test, model_name):
     # Предсказания модели
     y_pred = model.predict(X_test)
@@ -265,12 +265,14 @@ def main():
         plot_3d_graph(processed_data)
         st.subheader("🔹 Шаг 6: Классификация")
         knc, log_reg, dtc, X_train, X_test, y_train, y_test = classification_models(processed_data)
+        evaluate_models(knc, log_reg, dtc, X_train, X_test, y_train, y_test)
         st.subheader("🔹 Шаг 7: Визуализация границ решений")
         #plot_decision_boundaries(X_train, y_train, knc, log_reg, dtc)
         st.subheader("🔹 Шаг 8: ROC-кривые") 
         plot_roc_curves(knc, log_reg, dtc, X_test, y_test)
         st.subheader("🔹 9. Оценка качества классификации")
         evaluate_models(knc, log_reg, dtc, X_train, X_test, y_train, y_test)
+        st.write("Видно что у маделей KNN и Decission Tree переобучение так как у них на трейне высокий показатель а на тесте низкий. А у модели Logistic Regression такого нет. по этому будем считать что самый хорошый модель это - Logistic Regression")
         st.subheader("🔹 10. Дополнительно")
         analyze_classification_results(knc, log_reg, dtc, X_test, y_test)
         visualize_data(processed_data)
