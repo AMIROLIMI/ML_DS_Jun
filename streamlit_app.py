@@ -10,27 +10,12 @@ def load_data(url):
 
 
 def preprocess_features(data):
-    # Удаление категориальных признаков, как указано в вашем коде
     data = data.drop(columns=["A1", "A4", "A5", "A6", "A7", "A9", "A10", "A12", "A13"])
-
-    # Замена "?" на NaN
     data.replace("?", np.nan, inplace=True)
-    
-    # Преобразуем все значения в числовые, если это возможно
-    data = data.apply(pd.to_numeric, errors='coerce')
-
-    # Заполнение пропущенных значений средними
     imputer = SimpleImputer(strategy='mean')
-    # Преобразование данных, затем возвращение DataFrame с исходными столбцами
-    imputed_data = imputer.fit_transform(data)
-    
-    # Возвращаем DataFrame с теми же столбцами, что и у исходных данных
-    data = pd.DataFrame(imputed_data, columns=data.columns)
-    
-    # Преобразование категориальных столбцов (например, A11, A14, A15, A16) в целочисленные
+    data = pd.DataFrame(imputer.fit_transform(data), columns=data.columns)
     for col in ["A11", "A14", "A15", "A16"]:
         data[col] = data[col].astype(int)
-    
     return data
 
 
