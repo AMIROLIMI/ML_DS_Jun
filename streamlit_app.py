@@ -18,11 +18,21 @@ def preprocess_features(data):
     
     # Преобразуем все значения в числовые, если это возможно
     data = data.apply(pd.to_numeric, errors='coerce')
+
+    # Заполнение пропущенных значений средними
     imputer = SimpleImputer(strategy='mean')
-    data = pd.DataFrame(imputer.fit_transform(data), columns=data.columns)
+    # Преобразование данных, затем возвращение DataFrame с исходными столбцами
+    imputed_data = imputer.fit_transform(data)
+    
+    # Возвращаем DataFrame с теми же столбцами, что и у исходных данных
+    data = pd.DataFrame(imputed_data, columns=data.columns)
+    
+    # Преобразование категориальных столбцов (например, A11, A14, A15, A16) в целочисленные
     for col in ["A11", "A14", "A15", "A16"]:
         data[col] = data[col].astype(int)
+    
     return data
+
 
 
 def main():
