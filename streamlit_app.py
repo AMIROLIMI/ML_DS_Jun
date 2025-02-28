@@ -83,7 +83,7 @@ def classification_models(data):
     X = data.drop(columns=["A16"])
     y = data["A16"]
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=11)
-    st.dataframe(y_train.unique())
+    st.dataframe(y.unique())
     scaler = StandardScaler()
     X_train = scaler.fit_transform(X_train)
     X_test = scaler.transform(X_test)
