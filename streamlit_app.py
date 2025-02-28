@@ -75,7 +75,7 @@ def classification_models(data):
     knc = KNeighborsClassifier(n_neighbors=3)
     log_reg = LogisticRegression(max_iter=565)
     dtc = DecisionTreeClassifier(max_depth = 5)
-    X_train = np.array(X_train)[:, :2]
+    X_train = np.array(X_train)
     y_train = np.array(y_train)
     knc.fit(X_train, y_train)
     log_reg.fit(X_train, y_train)
@@ -86,7 +86,6 @@ def classification_models(data):
     return knc, log_reg, dtc, X_train, X_test, y_train, y_test
 
 def plot_decision_boundaries(X_train, y_train, knc, log_reg, dtc):
-    
     fig, axes = plt.subplots(1, 3, figsize=(18, 5))
     classifiers = [(knc, "K-Nearest Neighbors"), (log_reg, "Logistic Regression"), (dtc, "Decision Tree")]
     for idx, (clf, title) in enumerate(classifiers):
@@ -95,7 +94,6 @@ def plot_decision_boundaries(X_train, y_train, knc, log_reg, dtc):
         plt.xlabel("A2")
         plt.ylabel("A3")
         plt.title(title)
-    
     plt.suptitle("граница решений для каждого классификатора ", fontsize=14)
     plt.tight_layout(rect=[0, 0, 1, 0.95])
     plt.show()
