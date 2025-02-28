@@ -254,13 +254,13 @@ def main():
         st.write(significant_features)
         # шаг 5
         plot_3d_graph(processed_data)
-        # Шаг 6: Классификация
+        st.subheader("🔹 Шаг 6: Классификация")
         knc, log_reg, dtc, X_train, X_test, y_train, y_test = classification_models(processed_data)
 
-         # Шаг 7: Визуализация границ решений
+        st.subheader("🔹 Шаг 7: Визуализация границ решений")
         plot_decision_boundaries(X_train, y_train)
 
-        # Шаг 8: ROC-кривые
+        st.subheader("🔹 Шаг 7: ROC-кривые") 
         plot_roc_curves(knc, log_reg, dtc, X_test, y_test)
 
 if __name__ == "__main__":
