@@ -16,10 +16,7 @@ from sklearn.metrics import confusion_matrix, classification_report
 import seaborn as sns
 
 def evaluate_model(model, X_test, y_test, model_name):
-    # Предсказания модели
     y_pred = model.predict(X_test)
-
-    # Матрица ошибок
     cm = confusion_matrix(y_test, y_pred)
     fig, ax = plt.subplots(figsize=(6, 4))
     sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=["Class 0", "Class 1"], yticklabels=["Class 0", "Class 1"])
@@ -28,12 +25,10 @@ def evaluate_model(model, X_test, y_test, model_name):
     plt.title(f"Матрица ошибок: {model_name}")
     st.pyplot(fig)
 
-    # Отчёт о классификации (F1-score, Precision, Recall)
-    st.subheader(f"📊 Метрики модели {model_name}")
+    st.subheader(f"Метрики модели {model_name}")
     report = classification_report(y_test, y_pred, output_dict=True)
     st.write(pd.DataFrame(report).transpose())
 
-# Вызов функции для всех моделей
 def analyze_classification_results(knc, log_reg, dtc, X_test, y_test):
     evaluate_model(knc, X_test, y_test, "K-Nearest Neighbors")
     evaluate_model(log_reg, X_test, y_test, "Logistic Regression")
@@ -194,6 +189,30 @@ def visualize_data(data):
     visualize_pairplot(data)
     visualize_correlation_matrix(data)
 
+def evaluate_models(knc, log_reg, dtc, X_train, X_test, y_train, y_test):
+    models = {"KNN": knc, "Logistic Regression": log_reg, "Decision Tree": dtc}
+    for name, model in models.items():
+        y_pred = model.predict(X_test)
+        accuracy = accuracy_score(y_test, y_pred)
+        st.write(f"{name} - Accuracy: {accuracy:.2f}")
+
+def analyze_classification_results(knc, log_reg, dtc, X_test, y_test):
+    models = {"KNN": knc, "Logistic Regression": log_reg, "Decision Tree": dtc}
+    for name, model in models.items():
+        y_pred = model.predict(X_test)
+        st.write(f"{name} - Prediction Distribution:")
+        st.bar_chart(pd.Series(y_pred).value_counts())
+
+def visualize_data2(data):
+    st.subheader("Pairplot Selected Features")
+    import seaborn as sns
+    import matplotlib.pyplot as plt
+    selected_features = ["A11", "A8", "A3", "A16"]
+    data_selected = data[selected_features]
+    pairplot_fig = sns.pairplot(data_selected, hue="A16", diag_kind='kde')
+    st.pyplot(pairplot_fig)
+
+
 def main():
     st.title("📊 Анализ набора данных из репозитория UCI")
     st.subheader("🔹 Шаг 1: Загрузка данных")
@@ -264,6 +283,9 @@ def main():
         st.subheader("🔹 10. Дополнительно")
         analyze_classification_results(knc, log_reg, dtc, X_test, y_test)
         visualize_data(processed_data)
+        evaluate_models(knc, log_reg, dtc, X_train, X_test, y_train, y_test)
+        analyze_classification_results(knc, log_reg, dtc, X_test, y_test)
+        visualize_data2(processed_data)
 
 if __name__ == "__main__":
     main()
