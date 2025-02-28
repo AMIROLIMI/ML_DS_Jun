@@ -99,23 +99,23 @@ def classification_models(data):
 def plot_decision_boundaries(X_train, y_train):
     X_train_np = np.array(X_train)[:, :2]
     y_train_np = np.array(y_train)
-    
     knc.fit(X_train_np, y_train_np)
     log_reg.fit(X_train_np, y_train_np)
     dtc.fit(X_train_np, y_train_np)
-    
     fig, axes = plt.subplots(1, 3, figsize=(18, 5))
     classifiers = [(knc, "K-Nearest Neighbors"), (log_reg, "Logistic Regression"), (dtc, "Decision Tree")]
     
     for idx, (clf, title) in enumerate(classifiers):
         plt.sca(axes[idx])  
         plot_decision_regions(X_train_np, y_train_np, clf=clf, legend=2)
-        plt.xlabel("A2")  # Используйте наиболее коррелированные признаки
-        plt.ylabel("A3")  # Используйте наиболее коррелированные признаки
+        plt.xlabel("A2")
+        plt.ylabel("A3")
         plt.title(title)
     
-    plt.suptitle("Границы решений для каждого классификатора", fontsize=14)
+    plt.suptitle("граница решений для каждого классификатора ", fontsize=14)
     plt.tight_layout(rect=[0, 0, 1, 0.95])
+    plt.show()
+
     st.pyplot(fig)
 
 def plot_roc_curves(knc, log_reg, dtc, X_test, y_test):
