@@ -127,7 +127,7 @@ def main():
         """)
         
         if st.button("🔄 Отбор признаков"):
-            st.dataframe(processed_data.head(num_rows))
+            st.dataframe(data.head(num_rows))
             #significant_features = feature_selection(data)
             st.subheader("🔹 Три наиболее значимые признаки:")
             #st.write(significant_features)
