@@ -95,10 +95,9 @@ def classification_models(data):
     scaler = StandardScaler()
     X_train = scaler.fit_transform(X_train)
     X_test = scaler.transform(X_test)
-    print(np.unique(y_train, return_counts=True))
-    print(np.unique(y_test, return_counts=True))
+
     
-    knc = KNeighborsClassifier(n_neighbors=3)
+    # knc = KNeighborsClassifier(n_neighbors=3)
     log_reg = LogisticRegression(max_iter=565)
     dtc = DecisionTreeClassifier(max_depth=5)
     
@@ -110,15 +109,11 @@ def classification_models(data):
     st.subheader("🔹 Модели классификации обучены")
     st.write("K-Nearest Neighbors, Logistic Regression, Decision Tree успешно обучены на данных.")
     
-    return knc, log_reg, dtc, X_train, X_test, y_train, y_test
+    return  log_reg, dtc, X_train, X_test, y_train, y_test
 
 def plot_decision_boundaries(X_train, y_train):
     X_train_np = np.array(X_train)[:, :2]
     y_train_np = np.array(y_train)
-    
-    knc = KNeighborsClassifier(n_neighbors=3)
-    log_reg = LogisticRegression(max_iter=565)
-    dtc = DecisionTreeClassifier(max_depth=5)
     
     knc.fit(X_train_np, y_train_np)
     log_reg.fit(X_train_np, y_train_np)
@@ -258,7 +253,7 @@ def main():
         plot_3d_graph(processed_data)
         st.subheader("🔹 Шаг 6: Классификация")
         st.dataframe(processed_data.head(num_rows))
-        knc, log_reg, dtc, X_train, X_test, y_train, y_test = classification_models(processed_data)
+        log_reg, dtc, X_train, X_test, y_train, y_test = classification_models(processed_data)
         st.dataframe(processed_data.head(num_rows))
         st.subheader("🔹 Шаг 7: Визуализация границ решений")
         plot_decision_boundaries(X_train, y_train)
