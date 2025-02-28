@@ -42,14 +42,28 @@ def load_data(url):
 
 def preprocess_features(data):
     data = data.drop(columns=["A1", "A4", "A5", "A6", "A7", "A9", "A10", "A12", "A13"])
+    
+    # Преобразуем метки классов
     data["A16"] = data["A16"].apply(lambda x: 1 if x == "+" else 0)
+    
+    # Заменяем "?" на NaN
     data.replace("?", np.nan, inplace=True)
-    for col in ["A11", "A14", "A15", "A16"]:
-        data[col] = data[col].astype(int)
+    
+    # Преобразуем все возможные числовые столбцы в float
+    for col in data.columns:
+        data[col] = pd.to_numeric(data[col], errors="coerce")
+    
+    # Заполняем пропущенные значения средним соответствующего класса
     for col in data.columns:
         if col != "A16":  
             data[col] = data.groupby("A16")[col].transform(lambda x: x.fillna(x.mean()))
+    
+    # Преобразуем определенные столбцы в int
+    for col in ["A11", "A14", "A15", "A16"]:
+        data[col] = data[col].astype(int)
+
     return data
+
     
 def feature_selection(data):
     correlation_with_target = data.drop(columns=["A16"]).corrwith(data["A16"]).sort_values(ascending=False)
