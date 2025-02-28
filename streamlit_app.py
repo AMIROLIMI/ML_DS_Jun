@@ -255,7 +255,7 @@ def main():
         # шаг 5
         plot_3d_graph(processed_data)
         
-        st.dataframe(data.dtypes)
+        st.dataframe(processed_data.dtypes)
         # Шаг 6: Классификация
         knc, log_reg, dtc, X_train, X_test, y_train, y_test = classification_models(processed_data)
 
