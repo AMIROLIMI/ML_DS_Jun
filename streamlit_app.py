@@ -101,7 +101,7 @@ def plot_decision_boundaries(X_train, y_train, knc, log_reg, dtc):
 
 
 def plot_roc_curves(knc, log_reg, dtc, X_test, y_test):
-
+    plt.clf()
     y_score_knc = knc.predict_proba(X_test)[:, 1]
     y_score_log_reg = log_reg.predict_proba(X_test)[:, 1]
     y_score_dtc = dtc.predict_proba(X_test)[:, 1]
