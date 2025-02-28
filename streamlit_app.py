@@ -115,35 +115,29 @@ def plot_decision_boundaries(X_train, y_train):
     plt.suptitle("граница решений для каждого классификатора ", fontsize=14)
     plt.tight_layout(rect=[0, 0, 1, 0.95])
     plt.show()
-
-    st.pyplot(fig)
+    st.pyplot(plt)
 
 def plot_roc_curves(knc, log_reg, dtc, X_test, y_test):
     y_score_knc = knc.predict_proba(X_test)[:, 1]
     y_score_log_reg = log_reg.predict_proba(X_test)[:, 1]
     y_score_dtc = dtc.predict_proba(X_test)[:, 1]
-    
     fpr_knc, tpr_knc, _ = roc_curve(y_test, y_score_knc)
     fpr_log_reg, tpr_log_reg, _ = roc_curve(y_test, y_score_log_reg)
     fpr_dtc, tpr_dtc, _ = roc_curve(y_test, y_score_dtc)
-    
     auc_knc = auc(fpr_knc, tpr_knc)
     auc_log_reg = auc(fpr_log_reg, tpr_log_reg)
     auc_dtc = auc(fpr_dtc, tpr_dtc)
-    
     plt.plot(fpr_knc, tpr_knc, label=f'KNN (AUC = {auc_knc:.2f})', linestyle='-', color='blue')
     plt.plot(fpr_log_reg, tpr_log_reg, label=f'Logistic Regression (AUC = {auc_log_reg:.2f})', linestyle='-', color='orange')
     plt.plot(fpr_dtc, tpr_dtc, label=f'Decision Tree (AUC = {auc_dtc:.2f})', linestyle='-', color='green')
     plt.plot([0, 1], [0, 1], linestyle='--', color='gray')
-    
     plt.xlabel('FPR')
     plt.ylabel('TPR')
     plt.title('ROC-кривые')
     plt.legend()
     plt.grid()
+    plt.show()
     st.pyplot(plt)
-
-
 
 def main():
     st.title("📊 Анализ набора данных из репозитория UCI")
