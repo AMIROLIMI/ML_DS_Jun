@@ -34,8 +34,6 @@ def main():
     st.markdown("""
     - Загрузите набор данных из репозитория UCI, включая столбец с метками классов, указанный в индивидуальном задании.
     """)
-    st.markdown("Загрузите данные, выполните их обработку и предобработку.")
-
     url = st.text_input("Введите URL для загрузки данных:", 
                        "https://raw.githubusercontent.com/AMIROLIMI/ML_DS_Jun/master/HW4-crx.data")
     
