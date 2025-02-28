@@ -254,10 +254,8 @@ def main():
         st.write(significant_features)
         # шаг 5
         plot_3d_graph(processed_data)
-        st.subheader("📉 Количество пропущенных значений после обработки данных")
-        st.write(processed_data.isna().sum())
-        st.subheader("Обработанные данные")
-        st.dataframe(processed_data.head(num_rows))
+        
+        st.dataframe(data.dtypes)
         # Шаг 6: Классификация
         knc, log_reg, dtc, X_train, X_test, y_train, y_test = classification_models(processed_data)
 
