@@ -13,6 +13,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import roc_curve, auc, roc_auc_score
 from mlxtend.plotting import plot_decision_regions
 from sklearn.metrics import confusion_matrix, classification_report
+import seaborn as sns
 
 def evaluate_model(model, X_test, y_test, model_name):
     # Предсказания модели
