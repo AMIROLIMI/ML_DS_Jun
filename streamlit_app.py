@@ -24,6 +24,7 @@ def load_data(url):
 def preprocess_features(data):
     data = data.drop(columns=["A1", "A4", "A5", "A6", "A7", "A9", "A10", "A12", "A13"])
     data["A16"] = data["A16"].apply(lambda x: 1 if x == "+" else 0)
+    st.dataframe(data["A16"].head(690))
     data.replace("?", np.nan, inplace=True)
     imputer = SimpleImputer(strategy='mean')
     data = pd.DataFrame(imputer.fit_transform(data), columns=data.columns)
@@ -48,11 +49,13 @@ def feature_selection(data):
     
     st.subheader("🔹 Три наиболее значимые признаки с более чем 10 уникальными значениями")
     st.write(significant_features_with_correlation.head(3))
+    st.dataframe(data["A16"].head(690))
 
     return significant_features_with_correlation.head(3).index.tolist()
 
 def plot_3d_graph(data):
     st.subheader("🔹 Шаг 5: Визуализация данных")
+    st.dataframe(data["A16"].head(690))
     st.markdown("""
     - 🎨 Постройте 3D-график точек данных, используя разные цвета и маркеры для классов.
     - 🏷 Подпишите оси названиями признаков.
